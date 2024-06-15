@@ -7,17 +7,12 @@ fn main() {
     let app = param::App::parse();
     let verbose = app.global_opts.verbose;
     match app.command {
-        param::Command::Ignore {
+        param::Command::Miss {
             no_show_ignored,
             path,
-        } => {
-            ignore(verbose, no_show_ignored, path)
-        }
+        } => miss(verbose, no_show_ignored, path),
         param::Command::Watch(watch_args) => {
-            println!(
-                "watch: no_show_ignored = {}, path = {}",
-                watch_args.no_show_ignored, watch_args.path
-            );
+            watch(verbose, watch_args.no_show_ignored, watch_args.path)
         }
         param::Command::List => list(verbose),
     }
@@ -32,8 +27,15 @@ fn list(verbose: bool) {
         Ok(output) => {
             let stdout = String::from_utf8(output.stdout).unwrap_or("".to_string());
             let stderr = String::from_utf8(output.stderr).unwrap_or("".to_string());
-            println!("{}", stdout);
-            eprintln!("{}", stderr);
+            if !stdout.is_empty() {
+                println!("Ignored files:");
+                println!("{}", stdout.trim());
+            } else {
+                println!("No ignored files.");
+            }
+            if !stderr.is_empty() {
+                eprintln!("{}", stderr);
+            }
         }
         Err(e) => {
             eprintln!("Error: {}", e);
@@ -41,7 +43,7 @@ fn list(verbose: bool) {
     }
 }
 
-fn ignore(verbose: bool, no_show_ignored: bool, path: String) {
+fn miss(verbose: bool, no_show_ignored: bool, path: String) {
     let command = format!("git update-index --assume-unchanged {}", path);
     if verbose {
         println!("Command: {}", command);
@@ -51,7 +53,9 @@ fn ignore(verbose: bool, no_show_ignored: bool, path: String) {
             let stdout = String::from_utf8(output.stdout).unwrap_or("".to_string());
             let stderr = String::from_utf8(output.stderr).unwrap_or("".to_string());
             println!("{}", stdout);
-            eprintln!("{}", stderr);
+            if !stderr.is_empty() {
+                eprintln!("{}", stderr);
+            }
         }
         Err(e) => {
             eprintln!("Error: {}", e);
@@ -73,7 +77,9 @@ fn watch(verbose: bool, no_show_ignored: bool, path: String) {
             let stdout = String::from_utf8(output.stdout).unwrap_or("".to_string());
             let stderr = String::from_utf8(output.stderr).unwrap_or("".to_string());
             println!("{}", stdout);
-            eprintln!("{}", stderr);
+            if !stderr.is_empty() {
+                eprintln!("{}", stderr);
+            }
         }
         Err(e) => {
             eprintln!("Error: {}", e);
