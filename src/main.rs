@@ -15,7 +15,7 @@ fn main() {
             watch(verbose, watch_args.no_show_ignored, watch_args.path)
         }
         param::Command::List => list(verbose),
-        param::Command::Gofmt=>gofmt(verbose),
+        param::Command::Fmt => gofmt(verbose),
     }
 }
 
@@ -25,9 +25,7 @@ fn gofmt(verbose: bool) {
         println!("Command: {}", command);
     }
     match Command::new("sh").arg("-c").arg(command).output() {
-        Ok(output) => {
-            print(output,"ignored files is:")
-        }
+        Ok(output) => print(output, "ignored files is:"),
         Err(e) => {
             eprintln!("Error: {}", e);
         }
@@ -40,9 +38,7 @@ fn list(verbose: bool) {
         println!("Command: {}", command);
     }
     match Command::new("sh").arg("-c").arg(command).output() {
-        Ok(output) => {
-            print(output,"ignored files is:")
-        }
+        Ok(output) => print(output, "ignored files is:"),
         Err(e) => {
             eprintln!("Error: {}", e);
         }
@@ -55,9 +51,7 @@ fn ignore(verbose: bool, no_show_ignored: bool, path: String) {
         println!("Command: {}", command);
     }
     match Command::new("sh").arg("-c").arg(command).output() {
-        Ok(output) => {
-            print(output,"")
-        }
+        Ok(output) => print(output, ""),
         Err(e) => {
             eprintln!("Error: {}", e);
         }
@@ -74,9 +68,7 @@ fn watch(verbose: bool, no_show_ignored: bool, path: String) {
         println!("Command: {}", command);
     }
     match Command::new("sh").arg("-c").arg(command).output() {
-        Ok(output) => {
-            print(output,"")
-        }
+        Ok(output) => print(output, ""),
         Err(e) => {
             eprintln!("Error: {}", e);
         }
@@ -87,12 +79,11 @@ fn watch(verbose: bool, no_show_ignored: bool, path: String) {
     }
 }
 
-
-fn print(output: std::process::Output,stdout_prefix: &str) {
+fn print(output: std::process::Output, stdout_prefix: &str) {
     let stdout = String::from_utf8(output.stdout).unwrap_or("".to_string());
     let stderr = String::from_utf8(output.stderr).unwrap_or("".to_string());
     if !stdout.is_empty() {
-        if !stdout_prefix.is_empty(){
+        if !stdout_prefix.is_empty() {
             println!("{}", stdout_prefix);
         }
         println!("{}", stdout.trim());
