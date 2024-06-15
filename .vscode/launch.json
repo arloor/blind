@@ -19,7 +19,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["miss","-v","src/main.rs"],
+            "args": ["list","-v"],
             "cwd": "${workspaceFolder}"
         },
         {

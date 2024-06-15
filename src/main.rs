@@ -15,7 +15,7 @@ fn main() {
             watch(verbose, watch_args.no_show_ignored, watch_args.path)
         }
         param::Command::List => list(verbose),
-        param::Command::Fmt => gofmt(verbose),
+        param::Command::Fmt => gofmt(true),
     }
 }
 
