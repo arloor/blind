@@ -10,7 +10,7 @@ fn main() {
         param::Command::Miss {
             no_show_ignored,
             path,
-        } => miss(verbose, no_show_ignored, path),
+        } => ignore(verbose, no_show_ignored, path),
         param::Command::Watch(watch_args) => {
             watch(verbose, watch_args.no_show_ignored, watch_args.path)
         }
@@ -25,17 +25,7 @@ fn list(verbose: bool) {
     }
     match Command::new("sh").arg("-c").arg(command).output() {
         Ok(output) => {
-            let stdout = String::from_utf8(output.stdout).unwrap_or("".to_string());
-            let stderr = String::from_utf8(output.stderr).unwrap_or("".to_string());
-            if !stdout.is_empty() {
-                println!("Ignored files:");
-                println!("{}", stdout.trim());
-            } else {
-                println!("No ignored files.");
-            }
-            if !stderr.is_empty() {
-                eprintln!("{}", stderr);
-            }
+            print(output,"ignored files is:")
         }
         Err(e) => {
             eprintln!("Error: {}", e);
@@ -43,19 +33,14 @@ fn list(verbose: bool) {
     }
 }
 
-fn miss(verbose: bool, no_show_ignored: bool, path: String) {
+fn ignore(verbose: bool, no_show_ignored: bool, path: String) {
     let command = format!("git update-index --assume-unchanged {}", path);
     if verbose {
         println!("Command: {}", command);
     }
     match Command::new("sh").arg("-c").arg(command).output() {
         Ok(output) => {
-            let stdout = String::from_utf8(output.stdout).unwrap_or("".to_string());
-            let stderr = String::from_utf8(output.stderr).unwrap_or("".to_string());
-            println!("{}", stdout);
-            if !stderr.is_empty() {
-                eprintln!("{}", stderr);
-            }
+            print(output,"")
         }
         Err(e) => {
             eprintln!("Error: {}", e);
@@ -74,12 +59,7 @@ fn watch(verbose: bool, no_show_ignored: bool, path: String) {
     }
     match Command::new("sh").arg("-c").arg(command).output() {
         Ok(output) => {
-            let stdout = String::from_utf8(output.stdout).unwrap_or("".to_string());
-            let stderr = String::from_utf8(output.stderr).unwrap_or("".to_string());
-            println!("{}", stdout);
-            if !stderr.is_empty() {
-                eprintln!("{}", stderr);
-            }
+            print(output,"")
         }
         Err(e) => {
             eprintln!("Error: {}", e);
@@ -88,5 +68,20 @@ fn watch(verbose: bool, no_show_ignored: bool, path: String) {
 
     if !no_show_ignored {
         list(false);
+    }
+}
+
+
+fn print(output: std::process::Output,stdout_prefix: &str) {
+    let stdout = String::from_utf8(output.stdout).unwrap_or("".to_string());
+    let stderr = String::from_utf8(output.stderr).unwrap_or("".to_string());
+    if !stdout.is_empty() {
+        if !stdout_prefix.is_empty(){
+            println!("{}", stdout_prefix);
+        }
+        println!("{}", stdout.trim());
+    }
+    if !stderr.is_empty() {
+        eprintln!("{}", stderr);
     }
 }

@@ -11,15 +11,15 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=blind",
-                    "--package=blind"
+                    "--bin=repo",
+                    "--package=repo"
                 ],
                 "filter": {
-                    "name": "blind",
+                    "name": "repo",
                     "kind": "bin"
                 }
             },
-            "args": ["list","-v"],
+            "args": ["miss","-v","src/main.rs"],
             "cwd": "${workspaceFolder}"
         },
         {
