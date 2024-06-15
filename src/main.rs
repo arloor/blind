@@ -15,6 +15,22 @@ fn main() {
             watch(verbose, watch_args.no_show_ignored, watch_args.path)
         }
         param::Command::List => list(verbose),
+        param::Command::Gofmt=>gofmt(verbose),
+    }
+}
+
+fn gofmt(verbose: bool) {
+    let command = r#"gofmt -w -s ."#;
+    if verbose {
+        println!("Command: {}", command);
+    }
+    match Command::new("sh").arg("-c").arg(command).output() {
+        Ok(output) => {
+            print(output,"ignored files is:")
+        }
+        Err(e) => {
+            eprintln!("Error: {}", e);
+        }
     }
 }
 

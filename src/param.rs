@@ -25,6 +25,7 @@ pub(crate) enum Command {
     Watch(WatchArgs),
     /// 展示当前被忽略的文件
     List,
+    Gofmt,
 }
 
 #[derive(Debug, Args)]
