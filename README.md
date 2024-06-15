@@ -15,6 +15,7 @@ git update-index --no-assume-unchanged README.md ## 取消假设某文件未变�
 ## 安装
 
 ```bash
+# 安装到 ~/.cargo/bin/repo
 cargo install --git https://github.com/arloor/repo
 ```
 
